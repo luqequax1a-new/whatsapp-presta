@@ -199,35 +199,45 @@ class WhatsAppWidget extends Module
         $errors = [];
         
         // Validate and sanitize phone number
-        $phone = Validator::sanitizePhone(Tools::getValue('WHATSAPP_WIDGET_PHONE'));
-        if (!empty($phone) && !Validator::validatePhone($phone)) {
+        $phoneInput = Tools::getValue('WHATSAPP_WIDGET_PHONE');
+        $phoneResult = Validator::validatePhone($phoneInput);
+        if (!$phoneResult['valid']) {
             $errors[] = $this->l('Invalid phone number format. Please use E.164 format (e.g., +905551112233)');
         }
+        $phone = $phoneResult['sanitized'];
         
         // Validate and sanitize message templates
-        $defaultMessage = Validator::sanitizeMessageTemplate(Tools::getValue('WHATSAPP_WIDGET_DEFAULT_MESSAGE'));
-        $productMessage = Validator::sanitizeMessageTemplate(Tools::getValue('WHATSAPP_WIDGET_PRODUCT_MESSAGE'));
-        
-        if (!Validator::validateMessageTemplate($defaultMessage)) {
+        $defaultMessageInput = Tools::getValue('WHATSAPP_WIDGET_DEFAULT_MESSAGE');
+        $defaultMessageResult = Validator::validateMessage($defaultMessageInput);
+        if (!$defaultMessageResult['valid']) {
             $errors[] = $this->l('Default message template is invalid or too long');
         }
+        $defaultMessage = $defaultMessageResult['sanitized'];
         
-        if (!Validator::validateMessageTemplate($productMessage)) {
+        $productMessageInput = Tools::getValue('WHATSAPP_WIDGET_PRODUCT_MESSAGE');
+        $productMessageResult = Validator::validateMessage($productMessageInput);
+        if (!$productMessageResult['valid']) {
             $errors[] = $this->l('Product message template is invalid or too long');
         }
+        $productMessage = $productMessageResult['sanitized'];
         
         // Validate color
-        $color = Tools::getValue('WHATSAPP_WIDGET_THEME_COLOR');
-        if (!Validator::validateHexColor($color)) {
+        $colorInput = Tools::getValue('WHATSAPP_WIDGET_THEME_COLOR');
+        $colorResult = Validator::validateColor($colorInput);
+        if (!$colorResult['valid']) {
             $errors[] = $this->l('Invalid color format. Please use hex format (e.g., #25D366)');
         }
+        $color = $colorResult['sanitized'];
         
         // Validate working hours
         if (Tools::getValue('WHATSAPP_WIDGET_WORKING_HOURS_ENABLED')) {
             $workingStart = Tools::getValue('WHATSAPP_WIDGET_START_TIME');
             $workingEnd = Tools::getValue('WHATSAPP_WIDGET_END_TIME');
             
-            if (!Validator::validateTimeFormat($workingStart) || !Validator::validateTimeFormat($workingEnd)) {
+            $startTimeResult = Validator::validateTime($workingStart);
+            $endTimeResult = Validator::validateTime($workingEnd);
+            
+            if (!$startTimeResult['valid'] || !$endTimeResult['valid']) {
                 $errors[] = $this->l('Invalid time format. Please use HH:MM format');
             }
             
@@ -240,49 +250,58 @@ class WhatsAppWidget extends Module
         }
         
         // Validate consent cookies
-        $consentCookies = Tools::getValue('WHATSAPP_WIDGET_CONSENT_COOKIES');
-        if (!empty($consentCookies)) {
-            $cookieNames = array_map('trim', explode(',', $consentCookies));
-            foreach ($cookieNames as $cookieName) {
-                if (!Validator::validateCookieName($cookieName)) {
-                    $errors[] = $this->l('Invalid cookie name: ') . Validator::sanitizeOutput($cookieName);
-                }
-            }
+        $consentCookiesInput = Tools::getValue('WHATSAPP_WIDGET_CONSENT_COOKIES');
+        $cookiesResult = Validator::validateCookieNames($consentCookiesInput);
+        if (!$cookiesResult['valid']) {
+            $errors[] = $this->l('Invalid cookie names: ') . $cookiesResult['error'];
         }
+        $consentCookies = $cookiesResult['sanitized'];
         
         // Validate dataLayer event name
-        $dataLayerEvent = Tools::getValue('WHATSAPP_WIDGET_DATALAYER_EVENT');
-        if (!empty($dataLayerEvent) && !Validator::validateEventName($dataLayerEvent)) {
-            $errors[] = $this->l('Invalid dataLayer event name');
+        $dataLayerEventInput = Tools::getValue('WHATSAPP_WIDGET_DATALAYER_EVENT');
+        $eventResult = Validator::validateEventName($dataLayerEventInput);
+        if (!$eventResult['valid']) {
+            $errors[] = $this->l('Invalid dataLayer event name: ') . $eventResult['error'];
         }
+        $dataLayerEvent = $eventResult['sanitized'];
         
         if (!empty($errors)) {
             return $this->displayError(implode('<br>', $errors));
         }
         
         // Sanitize and save configuration
+        $visibilityPagesResult = Validator::validateAllowedValues(Tools::getValue('WHATSAPP_WIDGET_VISIBILITY_PAGES', []), ['home', 'category', 'product', 'cms', 'cart']);
+        $visibilityDevicesResult = Validator::validateAllowedValues(Tools::getValue('WHATSAPP_WIDGET_VISIBILITY_DEVICES', []), ['desktop', 'mobile']);
+        $positionResult = Validator::validateAllowedValues([Tools::getValue('WHATSAPP_WIDGET_POSITION')], ['bottom-right', 'bottom-left']);
+        $buttonSizeResult = Validator::validateAllowedValues([Tools::getValue('WHATSAPP_WIDGET_BUTTON_SIZE')], ['sm', 'md', 'lg']);
+        $borderRadiusResult = Validator::validateAllowedValues([Tools::getValue('WHATSAPP_WIDGET_BORDER_RADIUS')], ['md', 'lg']);
+        $workingDaysResult = Validator::validateAllowedValues(Tools::getValue('WHATSAPP_WIDGET_WORKING_DAYS', []), ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']);
+        
+        $offlineMessageInput = Tools::getValue('WHATSAPP_WIDGET_OFFLINE_MESSAGE');
+        $offlineMessageResult = Validator::validateMessage($offlineMessageInput);
+        
         $configUpdates = [
             'ENABLED' => WwSecurity::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_ENABLED'), 'bool'),
             'PHONE' => $phone,
             'DEFAULT_MESSAGE' => $defaultMessage,
             'PRODUCT_MESSAGE' => $productMessage,
-            'VISIBILITY_PAGES' => json_encode(Validator::validateAllowedValues(Tools::getValue('WHATSAPP_WIDGET_VISIBILITY_PAGES', []), ['home', 'category', 'product', 'cms', 'cart'])),
-            'VISIBILITY_DEVICES' => json_encode(Validator::validateAllowedValues(Tools::getValue('WHATSAPP_WIDGET_VISIBILITY_DEVICES', []), ['desktop', 'mobile'])),
-            'POSITION' => Validator::validateAllowedValues([Tools::getValue('WHATSAPP_WIDGET_POSITION')], ['bottom-right', 'bottom-left'])[0] ?? 'bottom-right',
+            'VISIBILITY_PAGES' => json_encode($visibilityPagesResult['sanitized']),
+            'VISIBILITY_DEVICES' => json_encode($visibilityDevicesResult['sanitized']),
+            'POSITION' => $positionResult['sanitized'][0] ?? 'bottom-right',
             'THEME_COLOR' => $color,
-            'BUTTON_SIZE' => Validator::validateAllowedValues([Tools::getValue('WHATSAPP_WIDGET_BUTTON_SIZE')], ['sm', 'md', 'lg'])[0] ?? 'md',
-            'BORDER_RADIUS' => Validator::validateAllowedValues([Tools::getValue('WHATSAPP_WIDGET_BORDER_RADIUS')], ['md', 'lg'])[0] ?? 'md',
+            'BUTTON_SIZE' => $buttonSizeResult['sanitized'][0] ?? 'md',
+            'BORDER_RADIUS' => $borderRadiusResult['sanitized'][0] ?? 'md',
             'DARK_MODE' => WwSecurity::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_DARK_MODE'), 'bool'),
             'WORKING_HOURS_ENABLED' => WwSecurity::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_WORKING_HOURS_ENABLED'), 'bool'),
-            'WORKING_DAYS' => json_encode(Validator::validateAllowedValues(Tools::getValue('WHATSAPP_WIDGET_WORKING_DAYS', []), ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])),
+            'WORKING_DAYS' => json_encode($workingDaysResult['sanitized']),
             'START_TIME' => Tools::getValue('WHATSAPP_WIDGET_START_TIME'),
             'END_TIME' => Tools::getValue('WHATSAPP_WIDGET_END_TIME'),
-            'OFFLINE_MESSAGE' => Validator::sanitizeMessageTemplate(Tools::getValue('WHATSAPP_WIDGET_OFFLINE_MESSAGE')),
+            'OFFLINE_MESSAGE' => $offlineMessageResult['sanitized'],
             'CONSENT_REQUIRED' => WwSecurity::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_CONSENT_REQUIRED'), 'bool'),
-            'CONSENT_COOKIES' => Validator::sanitizeOutput(Tools::getValue('WHATSAPP_WIDGET_CONSENT_COOKIES')),
+            'CONSENT_COOKIES' => $consentCookies,
             'FORCE_WA_ME' => WwSecurity::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_FORCE_WA_ME'), 'bool'),
             'DATALAYER_ENABLED' => WwSecurity::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_DATALAYER_ENABLED'), 'bool'),
-            'DATALAYER_EVENT' => Validator::sanitizeOutput($dataLayerEvent)
+            'DATALAYER_EVENT' => $dataLayerEvent
         ];
         
         foreach ($configUpdates as $key => $value) {
