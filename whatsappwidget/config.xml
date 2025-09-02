@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>whatsappwidget</name>
+    <displayName><![CDATA[WhatsApp Widget]]></displayName>
+    <version><![CDATA[1.0.0]]></version>
+    <description><![CDATA[Customizable WhatsApp widget for PrestaShop 8.x with modern admin panel and performance optimization]]></description>
+    <author><![CDATA[Your Name]]></author>
+    <tab><![CDATA[front_office_features]]></tab>
+    <confirmUninstall><![CDATA[Are you sure you want to uninstall WhatsApp Widget? All configuration will be lost.]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+    <limited_countries></limited_countries>
+</module>
