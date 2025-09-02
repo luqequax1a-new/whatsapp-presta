@@ -6,27 +6,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-// Autoload composer dependencies
-if (file_exists(__DIR__ . '/vendor/autoload.php')) {
-    require_once __DIR__ . '/vendor/autoload.php';
-} else {
-    // PSR-4 fallback autoloader for shared hosting without composer
-    spl_autoload_register(function ($class) {
-        $prefix = 'WhatsAppWidget\\';
-        $baseDir = __DIR__ . '/src/';
-        
-        $len = strlen($prefix);
-        if (strncmp($prefix, $class, $len) !== 0) {
-            return;
-        }
-        
-        $relative = substr($class, $len);
-        $file = $baseDir . str_replace('\\', '/', $relative) . '.php';
-        if (is_file($file)) {
-            require $file;
-        }
-    });
-}
+// Autoload will be handled in constructor
 
 use WhatsAppWidget\Util\Phone;
 use WhatsAppWidget\Util\Template;
@@ -72,6 +52,16 @@ class WhatsAppWidget extends Module
 
     public function __construct()
     {
+        // Handle autoloading with vendor check
+        $vendor = __DIR__ . '/vendor/autoload.php';
+        $installed = __DIR__ . '/vendor/composer/InstalledVersions.php';
+        
+        if (is_file($vendor) && is_file($installed)) {
+            require_once $vendor; // Vendor tam ise Composer autoload
+        } else {
+            $this->registerFallbackAutoload(); // Aksi halde PSR-4 fallback
+        }
+        
         $this->name = 'whatsappwidget';
         $this->tab = 'front_office_features';
         $this->version = '2.0.0';
@@ -843,5 +833,25 @@ class WhatsAppWidget extends Module
         }
         
         return $values;
+    }
+    
+    /**
+     * Register PSR-4 fallback autoloader when Composer is not available
+     */
+    private function registerFallbackAutoload(): void
+    {
+        static $booted = false;
+        if ($booted) return;
+        $booted = true;
+        
+        spl_autoload_register(function ($class) {
+            $prefix = 'WhatsAppWidget\\';
+            $baseDir = __DIR__ . '/src/';
+            $len = strlen($prefix);
+            if (strncmp($prefix, $class, $len) !== 0) return;
+            $relative = substr($class, $len);
+            $file = $baseDir . str_replace('\\', '/', $relative) . '.php';
+            if (is_file($file)) require $file;
+        });
     }
 }
