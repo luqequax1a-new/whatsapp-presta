@@ -353,6 +353,7 @@
     </div>
 </div>
 
+{literal}
 <script>
 $(document).ready(function() {
     // CSRF token validation
@@ -494,3 +495,4 @@ $(document).ready(function() {
     });
 });
 </script>
+{/literal}
