@@ -24,6 +24,8 @@ class WhatsAppWidget extends Module
     private array $hooks = [
         'header',
         'displayAfterBodyOpeningTag',
+        'displayFooter',
+        'displayFooterAfter',
         'displayProductButtons'
     ];
     
@@ -78,11 +80,26 @@ class WhatsAppWidget extends Module
             return false;
         }
         
-        // Register hooks
-        foreach ($this->hooks as $hook) {
+        // Register hooks with fallback strategy
+        $primaryHooks = ['header', 'displayAfterBodyOpeningTag'];
+        $fallbackHooks = ['displayFooter', 'displayFooterAfter'];
+        $optionalHooks = ['displayProductButtons'];
+        
+        // Register primary hooks (required)
+        foreach ($primaryHooks as $hook) {
             if (!$this->registerHook($hook)) {
                 return false;
             }
+        }
+        
+        // Register fallback hooks (best effort)
+        foreach ($fallbackHooks as $hook) {
+            $this->registerHook($hook); // Don't fail if these don't exist
+        }
+        
+        // Register optional hooks
+        foreach ($optionalHooks as $hook) {
+            $this->registerHook($hook);
         }
         
         // Set default configuration
@@ -273,13 +290,16 @@ class WhatsAppWidget extends Module
      */
     public function hookHeader(): void
     {
-        // Only load assets if widget should be displayed
-        if (!$this->shouldDisplayWidget()) {
+        // CRITICAL: Check consent FIRST before any processing
+        // This prevents FOUC and SEO issues by not loading any assets without consent
+        if ($this->isConsentRequired() && !$this->hasUserConsent()) {
+            // Set flag to prevent HTML injection in other hooks
+            $this->context->smarty->assign('whatsapp_widget_consent_blocked', true);
             return;
         }
         
-        // Check consent requirements before loading assets
-        if ($this->isConsentRequired() && !$this->hasUserConsent()) {
+        // Only load assets if widget should be displayed
+        if (!$this->shouldDisplayWidget()) {
             return;
         }
         
@@ -309,6 +329,58 @@ class WhatsAppWidget extends Module
      */
     public function hookDisplayAfterBodyOpeningTag(): string
     {
+        // Check if consent blocked any asset loading
+        if ($this->context->smarty->getTemplateVars('whatsapp_widget_consent_blocked')) {
+            return '';
+        }
+        
+        if (!$this->shouldDisplayWidget()) {
+            return '';
+        }
+        
+        // Mark that primary hook was used
+        $this->context->smarty->assign('whatsapp_widget_rendered', true);
+        
+        return $this->renderWidget();
+    }
+    
+    /**
+     * Hook: Footer - Fallback for themes that don't support displayAfterBodyOpeningTag
+     */
+    public function hookDisplayFooter(): string
+    {
+        // Check if consent blocked any asset loading
+        if ($this->context->smarty->getTemplateVars('whatsapp_widget_consent_blocked')) {
+            return '';
+        }
+        
+        // Only render if primary hook wasn't used
+        if ($this->context->smarty->getTemplateVars('whatsapp_widget_rendered')) {
+            return '';
+        }
+        
+        if (!$this->shouldDisplayWidget()) {
+            return '';
+        }
+        
+        return $this->renderWidget();
+    }
+    
+    /**
+     * Hook: Footer After - Secondary fallback
+     */
+    public function hookDisplayFooterAfter(): string
+    {
+        // Check if consent blocked any asset loading
+        if ($this->context->smarty->getTemplateVars('whatsapp_widget_consent_blocked')) {
+            return '';
+        }
+        
+        // Only render if primary hook wasn't used
+        if ($this->context->smarty->getTemplateVars('whatsapp_widget_rendered')) {
+            return '';
+        }
+        
         if (!$this->shouldDisplayWidget()) {
             return '';
         }

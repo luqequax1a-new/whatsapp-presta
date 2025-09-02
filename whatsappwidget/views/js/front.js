@@ -7,6 +7,9 @@
 (function() {
     'use strict';
 
+    // DataLayer guard for stores without GA/Tag Manager
+    window.dataLayer = window.dataLayer || [];
+
     // Widget configuration
     let widgetConfig = {};
     let isInitialized = false;
