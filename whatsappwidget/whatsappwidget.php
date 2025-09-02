@@ -450,7 +450,7 @@ class WhatsAppWidget extends Module
             position: fixed;
             bottom: 20px;
             {$positionStyles}
-            z-index: 9999;
+            z-index: 999999;
             width: {$buttonSize};
             height: {$buttonSize};
         }

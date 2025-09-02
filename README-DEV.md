@@ -3,8 +3,8 @@
 ## 🛠️ Development Setup
 
 ### Prerequisites
-- PHP 7.4+ or 8.x
-- PrestaShop 8.x development environment
+- PHP 8.1+ (required for typed properties and modern syntax)
+- PrestaShop 8.x/9.x development environment
 - Composer (optional, for future dependencies)
 - Git
 - Node.js (for future build tools)

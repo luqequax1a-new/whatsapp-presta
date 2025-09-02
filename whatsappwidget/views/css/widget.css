@@ -1,7 +1,7 @@
 /* WhatsApp Widget Styles */
 .whatsapp-widget {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    z-index: 9999;
+    z-index: 999999;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

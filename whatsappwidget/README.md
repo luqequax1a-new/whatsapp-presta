@@ -131,6 +131,12 @@ composer require luqeq/prestashop-whatsapp-widget
 - Customize consent messages
 - Debug consent issues with console logging
 
+### 🔗 **Hook Integration**
+- **Primary Hook**: `displayAfterBodyOpeningTag` for optimal placement
+- **Fallback Strategy**: If primary hook is disabled in theme, automatically falls back to `displayFooterAfter`
+- **Theme Compatibility**: Ensures widget displays correctly across all PrestaShop themes
+- **Note**: Some themes may have `displayAfterBodyOpeningTag` disabled; the fallback ensures consistent functionality
+
 ---
 
 ## 🔧 Advanced Features
