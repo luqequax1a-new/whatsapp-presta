@@ -3,11 +3,11 @@
     <name>whatsappwidget</name>
     <displayName><![CDATA[WhatsApp Widget]]></displayName>
     <version><![CDATA[1.0.0]]></version>
-    <description><![CDATA[Customizable WhatsApp widget for PrestaShop 8.x with modern admin panel and performance optimization]]></description>
+    <description><![CDATA[Professional WhatsApp widget for your PrestaShop store with advanced features like working hours, consent management, and customizable appearance.]]></description>
     <author><![CDATA[Your Name]]></author>
-    <tab><![CDATA[front_office_features]]></tab>
+    <tab><![CDATA[advertising_marketing]]></tab>
     <confirmUninstall><![CDATA[Are you sure you want to uninstall WhatsApp Widget? All configuration will be lost.]]></confirmUninstall>
     <is_configurable>1</is_configurable>
-    <need_instance>1</need_instance>
+    <need_instance>0</need_instance>
     <limited_countries></limited_countries>
 </module>

@@ -1,202 +1,281 @@
-# WhatsApp Widget for PrestaShop 8.x
+# 💬 WhatsApp Widget for PrestaShop
 
-A modern, customizable WhatsApp widget module for PrestaShop 8.x with advanced admin panel and performance optimization.
+<div align="center">
 
-## Features
+![PrestaShop](https://img.shields.io/badge/PrestaShop-8.x%20%7C%209.x-blue?style=for-the-badge&logo=prestashop)
+![PHP](https://img.shields.io/badge/PHP-8.1%2B-777BB4?style=for-the-badge&logo=php)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-2.0.0-orange?style=for-the-badge)
 
-### 🚀 Core Features
-- **Floating & Inline Widget Styles**: Choose between floating action button or inline widget
-- **Custom Hook Support**: Use `{hook h='displayCustomWhatsAppWidget'}` anywhere in your theme
-- **Product URL Integration**: Automatically includes product URL in WhatsApp messages on product pages
-- **Multi-Hook Support**: Display widget in header, footer, sidebar, or custom positions
-- **Page-Specific Visibility**: Control widget visibility on product, category, home, or all pages
+**🚀 Professional, lightweight and feature-rich WhatsApp widget module with advanced customization, GDPR compliance, and performance optimization.**
 
-### 🎨 Design & Customization
-- **Material Design Admin Panel**: Modern, responsive admin interface
-- **Color Customization**: Choose custom colors for the widget
-- **Size Options**: Small, medium, or large widget sizes
-- **Position Control**: Bottom-right, bottom-left, top-right, or top-left positioning
-- **Responsive Design**: Mobile-optimized with touch-friendly interactions
+[📥 Download](#installation) • [📖 Documentation](#configuration) • [🎯 Features](#features) • [🛠️ Support](#support)
 
-### ⚡ Performance Optimization
-- **Conditional Asset Loading**: CSS/JS only loaded when widget is displayed
-- **Minified CSS**: Optimized file sizes for faster loading
-- **Cache-Friendly**: Efficient caching strategies
-- **Lazy Loading**: Assets loaded only when needed
-
-### 🔧 Technical Features
-- **PrestaShop 8.x Compatible**: Built specifically for PrestaShop 8.x
-- **Security Focused**: SQL injection protection and secure data handling
-- **Cross-Browser Compatible**: Works on all modern browsers
-- **Accessibility Support**: WCAG compliant with keyboard navigation
-- **Dark Mode Support**: Automatic dark mode detection
-
-## Installation
-
-1. **Upload Module**:
-   - Upload the `whatsappwidget` folder to `/modules/` directory
-   - Or use PrestaShop's module installer
-
-2. **Install Module**:
-   - Go to Modules > Module Manager
-   - Find "WhatsApp Widget" and click Install
-
-3. **Configure Module**:
-   - Click Configure after installation
-   - Set your WhatsApp phone number (with country code)
-   - Customize appearance and behavior
-
-## Configuration
-
-### Basic Settings
-- **Enable Widget**: Turn the widget on/off
-- **Phone Number**: Your WhatsApp number with country code (e.g., +905551234567)
-- **Default Message**: Message template sent via WhatsApp
-
-### Display Settings
-- **Widget Style**: Floating (fixed position) or Inline (in content)
-- **Display Hook**: Choose where to show the widget
-- **Position**: Corner positioning for floating widgets
-
-### Appearance
-- **Color**: Custom background color
-- **Size**: Small, medium, or large
-
-### Page Visibility
-- **Product Pages**: Show on product detail pages
-- **Category Pages**: Show on category listing pages
-- **Home Page**: Show on homepage
-- **All Pages**: Override and show everywhere
-
-## Custom Hook Usage
-
-You can display the widget anywhere in your theme using the custom hook:
-
-```smarty
-{* In your theme template files *}
-{hook h='displayCustomWhatsAppWidget'}
-```
-
-### Examples:
-
-**In header.tpl:**
-```smarty
-<header>
-    <!-- Your header content -->
-    {hook h='displayCustomWhatsAppWidget'}
-</header>
-```
-
-**In product.tpl:**
-```smarty
-<div class="product-actions">
-    {hook h='displayCustomWhatsAppWidget'}
-    <!-- Other product actions -->
 </div>
-```
-
-**Conditional display:**
-```smarty
-{if $page.page_name == 'product'}
-    {hook h='displayCustomWhatsAppWidget'}
-{/if}
-```
-
-## File Structure
-
-```
-whatsappwidget/
-├── whatsappwidget.php          # Main module file
-├── config.xml                  # Module configuration
-├── README.md                   # Documentation
-├── views/
-│   ├── templates/
-│   │   ├── admin/
-│   │   │   └── configure.tpl   # Admin panel template
-│   │   └── hook/
-│   │       ├── widget.tpl      # Widget template
-│   │       └── custom-hook-example.tpl
-│   └── css/
-│       ├── admin.css           # Admin panel styles
-│       ├── widget.css          # Widget styles
-│       └── widget.min.css      # Minified widget styles
-└── views/js/
-    └── admin.js                # Admin panel JavaScript
-```
-
-## Hooks Used
-
-- `displayFooter` - Footer area
-- `displayHeader` - Header area
-- `displayTop` - Top of page
-- `displayLeftColumn` - Left sidebar
-- `displayRightColumn` - Right sidebar
-- `displayHome` - Homepage specific
-- `displayProductButtons` - Product page buttons area
-- `displayShoppingCartFooter` - Cart footer
-- `displayCustomWhatsAppWidget` - Custom position (created by module)
-- `actionFrontControllerSetMedia` - Asset loading
-
-## Browser Support
-
-- Chrome 60+
-- Firefox 55+
-- Safari 12+
-- Edge 79+
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
-## Performance Notes
-
-- CSS/JS assets are only loaded when the widget is enabled and should be displayed
-- Minified CSS reduces file size by ~60%
-- Widget uses efficient CSS animations with hardware acceleration
-- Responsive images and SVG icons for crisp display on all devices
-
-## Security Features
-
-- SQL injection protection using `pSQL()`
-- XSS prevention with proper escaping
-- Secure configuration handling
-- Validation of all user inputs
-
-## Troubleshooting
-
-### Widget Not Showing
-1. Check if module is enabled in configuration
-2. Verify page visibility settings
-3. Ensure correct hook is selected
-4. Check if phone number is configured
-
-### Styling Issues
-1. Clear PrestaShop cache
-2. Check for CSS conflicts
-3. Verify widget.css is loading
-4. Test with default theme
-
-### Performance Issues
-1. Enable CSS minification
-2. Check server cache settings
-3. Optimize images if using custom icons
-4. Monitor asset loading in browser dev tools
-
-## Changelog
-
-### Version 1.0.0
-- Initial release
-- Material Design admin panel
-- Custom hook support
-- Performance optimization
-- Mobile responsive design
-- Accessibility features
-
-## License
-
-MIT License - Feel free to modify and distribute.
-
-## Support
-
-For support and customization requests, please contact the module developer.
 
 ---
 
-**Developed for PrestaShop 8.x** | **Performance Optimized** | **Mobile Ready**
+## ✨ Features
+
+### 🎯 **Core Functionality**
+- 📱 **Smart Device Detection** - Automatically opens `wa.me` on mobile, `web.whatsapp.com` on desktop
+- 🎨 **Floating Action Button** - Customizable FAB with multiple positioning options
+- 📝 **Dynamic Message Templates** - Token replacement for personalized messages
+- 🛍️ **Product Integration** - Automatic product information inclusion
+- ⏰ **Working Hours Control** - Business hours with offline state management
+
+### 🔒 **Privacy & Compliance**
+- 🍪 **GDPR Consent Management** - Customizable cookie requirements
+- 🛡️ **Security First** - XSS protection, CSRF tokens, input validation
+- 🔐 **Template Security** - Automatic sanitization of unknown tokens
+- 📊 **Privacy-Friendly Analytics** - Optional dataLayer integration
+
+### ♿ **Accessibility & UX**
+- ⌨️ **Full Keyboard Navigation** - Tab, Enter, Space key support
+- 🔊 **Screen Reader Support** - ARIA labels and descriptions
+- 🌙 **Dark Mode Support** - Automatic theme detection
+- 📱 **Responsive Design** - Perfect on all devices
+- 🎭 **High Contrast Mode** - Enhanced visibility support
+
+### ⚡ **Performance & Technical**
+- 🚀 **Lightweight** - Minimal asset footprint with deferred loading
+- 🌍 **Timezone Support** - Store timezone with DST handling
+- 🔧 **Debug Mode** - Advanced logging with `?ww_debug=1`
+- 📦 **No Dependencies** - Pure vanilla JavaScript, no jQuery
+- 🎯 **Modern Code** - PHP 8.1+ with typed properties, PSR-12 compliance
+
+---
+
+## 🎮 Use Cases
+
+### 🛒 **E-commerce Stores**
+- **Product Support**: Instant customer support on product pages
+- **Order Assistance**: Help with checkout process and payment issues
+- **Size Guidance**: Clothing and shoe size consultations
+- **Stock Inquiries**: Real-time inventory questions
+
+### 🏢 **Service Businesses**
+- **Appointment Booking**: Quick scheduling via WhatsApp
+- **Quote Requests**: Instant price estimates
+- **Technical Support**: Real-time troubleshooting
+- **Consultation Services**: Professional advice and guidance
+
+### 🏪 **Local Businesses**
+- **Store Hours**: Working hours with timezone support
+- **Location Services**: Directions and store information
+- **Delivery Inquiries**: Order tracking and delivery updates
+- **Local Promotions**: Exclusive offers and discounts
+
+### 🎓 **Educational Platforms**
+- **Course Inquiries**: Program information and enrollment
+- **Student Support**: Academic assistance and guidance
+- **Technical Help**: Platform usage and troubleshooting
+- **Admission Process**: Application and documentation support
+
+---
+
+## 🛠️ Installation
+
+### 📦 **Method 1: Admin Panel Upload**
+```bash
+1. Download the latest release ZIP file
+2. Go to Modules > Module Manager in PrestaShop admin
+3. Click "Upload a module" and select the ZIP file
+4. Click "Configure" after successful installation
+```
+
+### 💻 **Method 2: Manual Installation**
+```bash
+# Extract to modules directory
+unzip whatsappwidget.zip -d /path/to/prestashop/modules/
+
+# Set proper permissions
+chmod -R 755 modules/whatsappwidget/
+chown -R www-data:www-data modules/whatsappwidget/
+```
+
+### 🔧 **Method 3: Composer (Development)**
+```bash
+composer require luqeq/prestashop-whatsapp-widget
+```
+
+---
+
+## ⚙️ Configuration
+
+### 📱 **Basic Setup**
+1. **Phone Number**: Enter your WhatsApp business number (with country code)
+2. **Default Message**: Customize the initial message template
+3. **Position**: Choose bottom-right or bottom-left placement
+4. **Visibility**: Select pages where widget should appear
+
+### 🎨 **Appearance Customization**
+```css
+/* Custom CSS examples */
+#whatsapp-widget .whatsapp-button {
+    background: #your-brand-color;
+    border-radius: 50%; /* or 8px for rounded corners */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+```
+
+### ⏰ **Working Hours Setup**
+- Configure business days and hours
+- Automatic timezone detection from store settings
+- Offline message customization
+- Next available time display
+
+### 🍪 **GDPR Compliance**
+- Enable consent requirement
+- Configure cookie names
+- Customize consent messages
+- Debug consent issues with console logging
+
+---
+
+## 🔧 Advanced Features
+
+### 🐛 **Debug Mode**
+Enable detailed logging by adding `?ww_debug=1` to any page URL:
+```javascript
+// Console output examples
+[WhatsApp Widget] Widget initialized
+[WhatsApp Widget] Working hours check: true
+[WhatsApp Widget] Consent status: granted
+[WhatsApp Widget] Opening chat with message: "Hello from {product_name}"
+```
+
+### 📊 **Analytics Integration**
+```javascript
+// Google Analytics 4 / GTM integration
+dataLayer.push({
+    'event': 'whatsapp_click',
+    'page_type': 'product',
+    'product_id': '123',
+    'product_name': 'Sample Product'
+});
+```
+
+### 🎯 **Message Templates**
+Supported tokens for dynamic content:
+- `{product_name}` - Current product name
+- `{product_price}` - Product price with currency
+- `{product_url}` - Direct product link
+- `{store_name}` - Your store name
+- `{page_title}` - Current page title
+
+### 🌐 **Multi-language Support**
+The module automatically adapts to your store's language settings:
+- Interface translations
+- Message templates per language
+- Timezone-aware working hours
+- Localized date/time formats
+
+---
+
+## 📋 Requirements
+
+| Component | Version | Notes |
+|-----------|---------|-------|
+| **PrestaShop** | 8.x - 9.x | Tested on latest versions |
+| **PHP** | 8.1+ | Required for modern features |
+| **MySQL** | 5.7+ / 8.0+ | Standard PrestaShop requirement |
+| **Browser** | Modern browsers | Chrome 90+, Firefox 88+, Safari 14+ |
+
+---
+
+## 🎨 Customization Examples
+
+### 🌈 **Brand Colors**
+```css
+/* Match your brand colors */
+:root {
+    --whatsapp-primary: #your-brand-color;
+    --whatsapp-hover: #your-hover-color;
+}
+```
+
+### 📱 **Mobile Optimization**
+```css
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+    #whatsapp-widget {
+        bottom: 80px; /* Above mobile navigation */
+        right: 15px;
+    }
+}
+```
+
+### 🎭 **Animation Customization**
+```css
+/* Custom animations */
+.whatsapp-button {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.whatsapp-button:hover {
+    transform: scale(1.1) rotate(5deg);
+}
+```
+
+---
+
+## 🚀 Performance
+
+- **⚡ Fast Loading**: Assets load only when needed
+- **📦 Small Footprint**: < 15KB total (CSS + JS)
+- **🔄 Efficient Caching**: Browser and server-side optimization
+- **📱 Mobile Optimized**: Minimal impact on mobile performance
+- **🎯 Conditional Loading**: Loads only on configured pages
+
+---
+
+## 🛡️ Security
+
+- ✅ **XSS Protection**: All user inputs sanitized
+- ✅ **CSRF Tokens**: Form submissions protected
+- ✅ **Input Validation**: Server-side validation for all data
+- ✅ **Template Security**: Unknown tokens automatically removed
+- ✅ **Permission Checks**: Admin-only configuration access
+
+---
+
+## 🔄 Changelog
+
+### 🆕 **v2.0.0** - Latest Release
+- ✨ **New**: Timezone support with DST handling
+- ✨ **New**: Enhanced accessibility (ARIA, keyboard navigation)
+- ✨ **New**: Toast notification system
+- ✨ **New**: Admin preview functionality
+- ✨ **New**: Debug mode with detailed logging
+- 🔧 **Improved**: Template security and token sanitization
+- 🔧 **Improved**: Popup blocker compatibility
+- 🔧 **Improved**: GDPR consent management
+- 🐛 **Fixed**: Working hours timezone issues
+- 🐛 **Fixed**: Mobile device detection
+
+---
+
+## 🤝 Support
+
+### 📞 **Getting Help**
+- 📧 **Email**: support@example.com
+- 💬 **WhatsApp**: +1234567890
+- 🐛 **Issues**: [GitHub Issues](https://github.com/username/prestashop-whatsapp-widget/issues)
+- 📖 **Documentation**: [Wiki](https://github.com/username/prestashop-whatsapp-widget/wiki)
+
+### 🤝 **Contributing**
+We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### 📄 **License**
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+
+**Made with ❤️ for the PrestaShop community**
+
+⭐ **Star this repo if it helped you!** ⭐
+
+</div>

@@ -1,380 +1,496 @@
-{*
-* WhatsApp Widget - Modern Admin Configuration Panel
-* Material Design inspired interface
-*}
-
-<link href="{$module_dir}views/css/admin.css" rel="stylesheet" type="text/css">
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
-<div class="whatsapp-admin-panel">
-    <!-- Header Section -->
-    <div class="whatsapp-card whatsapp-fade-in">
-        <div class="whatsapp-card-header">
-            <h3>
-                <i class="fab fa-whatsapp icon"></i>
-                {l s='WhatsApp Widget Configuration' mod='whatsappwidget'}
-            </h3>
-        </div>
-        <div class="whatsapp-card-body">
-            <p>{l s='Configure your WhatsApp widget to provide instant customer support. Choose from multiple display positions and customize the appearance to match your store design.' mod='whatsappwidget'}</p>
-            
-            <div class="whatsapp-flex whatsapp-justify-between whatsapp-align-center whatsapp-mt-3">
-                <div>
-                    <span class="whatsapp-status {if $WHATSAPP_WIDGET_ENABLED}enabled{else}disabled{/if}">
-                        <i class="fas fa-circle"></i>
-                        {if $WHATSAPP_WIDGET_ENABLED}{l s='Active' mod='whatsappwidget'}{else}{l s='Inactive' mod='whatsappwidget'}{/if}
-                    </span>
-                </div>
-                <div>
-                    <small class="text-muted">{l s='Last updated' mod='whatsappwidget'}: {date('d/m/Y H:i')}</small>
-                </div>
-            </div>
-        </div>
+<div class="panel">
+    <div class="panel-heading">
+        <i class="icon-whatsapp"></i>
+        {l s='WhatsApp Widget Configuration' mod='whatsappwidget'}
     </div>
-
-    <!-- Configuration Form -->
-    <form method="post" class="whatsapp-fade-in">
-        <div class="whatsapp-grid">
+    
+    <div class="panel-body">
+        <div class="alert alert-info">
+            <p><strong>{l s='Advanced WhatsApp Widget' mod='whatsappwidget'}</strong></p>
+            <p>{l s='Configure your WhatsApp widget with advanced features including consent management, working hours, and performance optimization.' mod='whatsappwidget'}</p>
+        </div>
+        
+        <form id="configuration_form" class="defaultForm form-horizontal" action="{$smarty.server.REQUEST_URI}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{$csrf_token}" />
+            
             <!-- Basic Settings -->
-            <div class="whatsapp-card">
-                <div class="whatsapp-card-header">
-                    <h3>
-                        <i class="fas fa-cog icon"></i>
-                        {l s='Basic Settings' mod='whatsappwidget'}
-                    </h3>
-                </div>
-                <div class="whatsapp-card-body">
-                    <!-- Enable Widget -->
-                    <div class="whatsapp-form-group">
-                        <label for="WHATSAPP_WIDGET_ENABLED">
+            <div class="form-wrapper">
+                <div class="form-group">
+                    <label class="control-label col-lg-3">
+                        <span class="label-tooltip" data-toggle="tooltip" title="{l s='Enable or disable the WhatsApp widget' mod='whatsappwidget'}">
                             {l s='Enable Widget' mod='whatsappwidget'}
-                        </label>
-                        <div class="whatsapp-switch">
-                            <input type="checkbox" id="WHATSAPP_WIDGET_ENABLED" name="WHATSAPP_WIDGET_ENABLED" value="1" {if $WHATSAPP_WIDGET_ENABLED}checked{/if}>
-                            <span class="slider"></span>
-                        </div>
-                        <small class="text-muted">{l s='Turn on/off the WhatsApp widget on your store' mod='whatsappwidget'}</small>
+                        </span>
+                    </label>
+                    <div class="col-lg-9">
+                        <span class="switch prestashop-switch fixed-width-lg">
+                            <input type="radio" name="WHATSAPP_WIDGET_ENABLED" id="WHATSAPP_WIDGET_ENABLED_on" value="1" {if $config_values.WHATSAPP_WIDGET_ENABLED}checked="checked"{/if}>
+                            <label for="WHATSAPP_WIDGET_ENABLED_on">{l s='Yes' mod='whatsappwidget'}</label>
+                            <input type="radio" name="WHATSAPP_WIDGET_ENABLED" id="WHATSAPP_WIDGET_ENABLED_off" value="0" {if !$config_values.WHATSAPP_WIDGET_ENABLED}checked="checked"{/if}>
+                            <label for="WHATSAPP_WIDGET_ENABLED_off">{l s='No' mod='whatsappwidget'}</label>
+                            <a class="slide-button btn"></a>
+                        </span>
                     </div>
-
-                    <!-- Phone Number -->
-                    <div class="whatsapp-form-group">
-                        <label for="WHATSAPP_WIDGET_PHONE">
-                            <i class="fas fa-phone"></i>
-                            {l s='WhatsApp Phone Number' mod='whatsappwidget'} *
-                        </label>
-                        <input type="tel" 
-                               id="WHATSAPP_WIDGET_PHONE" 
-                               name="WHATSAPP_WIDGET_PHONE" 
-                               class="form-control" 
-                               value="{$WHATSAPP_WIDGET_PHONE|escape:'html':'UTF-8'}" 
-                               placeholder="+90 555 123 45 67"
-                               data-tooltip="{l s='Enter your WhatsApp business number with country code' mod='whatsappwidget'}">
-                        <small class="text-muted">{l s='Include country code (e.g., +90 for Turkey)' mod='whatsappwidget'}</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="control-label col-lg-3 required">
+                        <span class="label-tooltip" data-toggle="tooltip" title="{l s='WhatsApp phone number in E.164 format (e.g., +905551112233)' mod='whatsappwidget'}">
+                            {l s='Phone Number' mod='whatsappwidget'}
+                        </span>
+                    </label>
+                    <div class="col-lg-9">
+                        <input type="text" name="WHATSAPP_WIDGET_PHONE" value="{$config_values.WHATSAPP_WIDGET_PHONE|escape:'html':'UTF-8'}" class="form-control" placeholder="+905551112233" required>
+                        <p class="help-block">{l s='Enter phone number in E.164 format (country code + number)' mod='whatsappwidget'}</p>
                     </div>
-
-                    <!-- Default Message -->
-                    <div class="whatsapp-form-group">
-                        <label for="WHATSAPP_WIDGET_MESSAGE">
-                            <i class="fas fa-comment"></i>
+                </div>
+            </div>
+            
+            <!-- Message Templates -->
+            <fieldset>
+                <legend><i class="icon-comment"></i> {l s='Message Templates' mod='whatsappwidget'}</legend>
+                
+                <div class="form-group">
+                    <label class="control-label col-lg-3">
+                        <span class="label-tooltip" data-toggle="tooltip" title="{l s='Default message for general pages. Available tokens: {page_url}, {shop_name}, {currency}' mod='whatsappwidget'}">
                             {l s='Default Message' mod='whatsappwidget'}
-                        </label>
-                        <textarea id="WHATSAPP_WIDGET_MESSAGE" 
-                                  name="WHATSAPP_WIDGET_MESSAGE" 
-                                  class="form-control" 
-                                  rows="3" 
-                                  maxlength="500"
-                                  placeholder="{l s='Hello! I would like to get information about this product.' mod='whatsappwidget'}">{$WHATSAPP_WIDGET_MESSAGE|escape:'html':'UTF-8'}</textarea>
-                        <small class="text-muted">{l s='This message will be pre-filled when customers click the widget' mod='whatsappwidget'}</small>
+                        </span>
+                    </label>
+                    <div class="col-lg-9">
+                        <textarea name="WHATSAPP_WIDGET_DEFAULT_MESSAGE" class="form-control" rows="3" maxlength="1000">{$config_values.WHATSAPP_WIDGET_DEFAULT_MESSAGE|escape:'html':'UTF-8'}</textarea>
+                        <p class="help-block">
+                            {l s='Available tokens:' mod='whatsappwidget'} <code>{literal}{page_url}{/literal}</code>, <code>{literal}{shop_name}{/literal}</code>, <code>{literal}{currency}{/literal}</code>
+                        </p>
                     </div>
                 </div>
-            </div>
-
-            <!-- Display Settings -->
-            <div class="whatsapp-card">
-                <div class="whatsapp-card-header">
-                    <h3>
-                        <i class="fas fa-eye icon"></i>
-                        {l s='Display Settings' mod='whatsappwidget'}
-                    </h3>
+                
+                <div class="form-group">
+                    <label class="control-label col-lg-3">
+                        <span class="label-tooltip" data-toggle="tooltip" title="{l s='Message template for product pages. Additional tokens: {product_name}, {product_ref}, {price}, {product_url}' mod='whatsappwidget'}">
+                            {l s='Product Page Message' mod='whatsappwidget'}
+                        </span>
+                    </label>
+                    <div class="col-lg-9">
+                        <textarea name="WHATSAPP_WIDGET_PRODUCT_MESSAGE" class="form-control" rows="3" maxlength="1000">{$config_values.WHATSAPP_WIDGET_PRODUCT_MESSAGE|escape:'html':'UTF-8'}</textarea>
+                        <p class="help-block">
+                            {l s='Additional tokens:' mod='whatsappwidget'} <code>{literal}{product_name}{/literal}</code>, <code>{literal}{product_ref}{/literal}</code>, <code>{literal}{price}{/literal}</code>, <code>{literal}{product_url}{/literal}</code>
+                        </p>
+                    </div>
                 </div>
-                <div class="whatsapp-card-body">
-                    <!-- Widget Style -->
-                    <div class="whatsapp-form-group">
-                        <label for="WHATSAPP_WIDGET_STYLE">
-                            <i class="fas fa-paint-brush"></i>
-                            {l s='Widget Style' mod='whatsappwidget'}
-                        </label>
-                        <div class="whatsapp-select">
-                            <select id="WHATSAPP_WIDGET_STYLE" name="WHATSAPP_WIDGET_STYLE" class="form-control">
-                                <option value="floating" {if $WHATSAPP_WIDGET_STYLE == 'floating'}selected{/if}>
-                                    {l s='Floating (Fixed Position)' mod='whatsappwidget'}
-                                </option>
-                                <option value="inline" {if $WHATSAPP_WIDGET_STYLE == 'inline'}selected{/if}>
-                                    {l s='Inline (In Content)' mod='whatsappwidget'}
-                                </option>
-                            </select>
+            </fieldset>
+            
+            <!-- Visibility Settings -->
+            <fieldset>
+                <legend><i class="icon-eye"></i> {l s='Visibility Settings' mod='whatsappwidget'}</legend>
+                
+                <div class="form-group">
+                    <label class="control-label col-lg-3">
+                        {l s='Show on Pages' mod='whatsappwidget'}
+                    </label>
+                    <div class="col-lg-9">
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="WHATSAPP_WIDGET_VISIBILITY_PAGES[]" value="home" {if 'home'|in_array:$config_values.WHATSAPP_WIDGET_VISIBILITY_PAGES}checked{/if}> {l s='Home Page' mod='whatsappwidget'}</label>
                         </div>
-                    </div>
-
-                    <!-- Display Hook -->
-                    <div class="whatsapp-form-group">
-                        <label for="WHATSAPP_WIDGET_HOOK">
-                            <i class="fas fa-map-pin"></i>
-                            {l s='Display Position' mod='whatsappwidget'}
-                        </label>
-                        <div class="whatsapp-select">
-                            <select id="WHATSAPP_WIDGET_HOOK" name="WHATSAPP_WIDGET_HOOK" class="form-control">
-                                <option value="displayFooter" {if $WHATSAPP_WIDGET_HOOK == 'displayFooter'}selected{/if}>
-                                    {l s='Footer' mod='whatsappwidget'}
-                                </option>
-                                <option value="displayHeader" {if $WHATSAPP_WIDGET_HOOK == 'displayHeader'}selected{/if}>
-                                    {l s='Header' mod='whatsappwidget'}
-                                </option>
-                                <option value="displayTop" {if $WHATSAPP_WIDGET_HOOK == 'displayTop'}selected{/if}>
-                                    {l s='Top of Page' mod='whatsappwidget'}
-                                </option>
-                                <option value="displayLeftColumn" {if $WHATSAPP_WIDGET_HOOK == 'displayLeftColumn'}selected{/if}>
-                                    {l s='Left Column' mod='whatsappwidget'}
-                                </option>
-                                <option value="displayRightColumn" {if $WHATSAPP_WIDGET_HOOK == 'displayRightColumn'}selected{/if}>
-                                    {l s='Right Column' mod='whatsappwidget'}
-                                </option>
-                                <option value="displayHome" {if $WHATSAPP_WIDGET_HOOK == 'displayHome'}selected{/if}>
-                                    {l s='Home Page Only' mod='whatsappwidget'}
-                                </option>
-                                <option value="displayProductButtons" {if $WHATSAPP_WIDGET_HOOK == 'displayProductButtons'}selected{/if}>
-                                    {l s='Product Buttons Area' mod='whatsappwidget'}
-                                </option>
-                                <option value="displayShoppingCartFooter" {if $WHATSAPP_WIDGET_HOOK == 'displayShoppingCartFooter'}selected{/if}>
-                                    {l s='Shopping Cart Footer' mod='whatsappwidget'}
-                                </option>
-                                <option value="displayCustomWhatsAppWidget" {if $WHATSAPP_WIDGET_HOOK == 'displayCustomWhatsAppWidget'}selected{/if}>
-                                    {l s='Custom Position (Manual)' mod='whatsappwidget'}
-                                </option>
-                            </select>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="WHATSAPP_WIDGET_VISIBILITY_PAGES[]" value="category" {if 'category'|in_array:$config_values.WHATSAPP_WIDGET_VISIBILITY_PAGES}checked{/if}> {l s='Category Pages' mod='whatsappwidget'}</label>
                         </div>
-                        <small class="text-muted">{l s='Choose where to display the widget on your pages' mod='whatsappwidget'}</small>
-                    </div>
-
-                    <!-- Widget Position (for floating style) -->
-                    <div class="whatsapp-form-group" id="position-group">
-                        <label for="WHATSAPP_WIDGET_POSITION">
-                            <i class="fas fa-arrows-alt"></i>
-                            {l s='Floating Position' mod='whatsappwidget'}
-                        </label>
-                        <div class="whatsapp-select">
-                            <select id="WHATSAPP_WIDGET_POSITION" name="WHATSAPP_WIDGET_POSITION" class="form-control">
-                                <option value="bottom-right" {if $WHATSAPP_WIDGET_POSITION == 'bottom-right'}selected{/if}>
-                                    {l s='Bottom Right' mod='whatsappwidget'}
-                                </option>
-                                <option value="bottom-left" {if $WHATSAPP_WIDGET_POSITION == 'bottom-left'}selected{/if}>
-                                    {l s='Bottom Left' mod='whatsappwidget'}
-                                </option>
-                                <option value="top-right" {if $WHATSAPP_WIDGET_POSITION == 'top-right'}selected{/if}>
-                                    {l s='Top Right' mod='whatsappwidget'}
-                                </option>
-                                <option value="top-left" {if $WHATSAPP_WIDGET_POSITION == 'top-left'}selected{/if}>
-                                    {l s='Top Left' mod='whatsappwidget'}
-                                </option>
-                            </select>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="WHATSAPP_WIDGET_VISIBILITY_PAGES[]" value="product" {if 'product'|in_array:$config_values.WHATSAPP_WIDGET_VISIBILITY_PAGES}checked{/if}> {l s='Product Pages' mod='whatsappwidget'}</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="WHATSAPP_WIDGET_VISIBILITY_PAGES[]" value="cart" {if 'cart'|in_array:$config_values.WHATSAPP_WIDGET_VISIBILITY_PAGES}checked{/if}> {l s='Cart Page' mod='whatsappwidget'}</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="WHATSAPP_WIDGET_VISIBILITY_PAGES[]" value="checkout" {if 'checkout'|in_array:$config_values.WHATSAPP_WIDGET_VISIBILITY_PAGES}checked{/if}> {l s='Checkout Pages' mod='whatsappwidget'}</label>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Appearance Settings -->
-        <div class="whatsapp-card whatsapp-fade-in">
-            <div class="whatsapp-card-header">
-                <h3>
-                    <i class="fas fa-palette icon"></i>
-                    {l s='Appearance Settings' mod='whatsappwidget'}
-                </h3>
-            </div>
-            <div class="whatsapp-card-body">
-                <div class="whatsapp-grid">
-                    <!-- Widget Color -->
-                    <div class="whatsapp-form-group">
-                        <label for="WHATSAPP_WIDGET_COLOR">
-                            <i class="fas fa-fill-drip"></i>
-                            {l s='Widget Color' mod='whatsappwidget'}
-                        </label>
-                        <div class="whatsapp-color-picker">
-                            <div class="whatsapp-color-preview" style="background-color: {$WHATSAPP_WIDGET_COLOR}"></div>
-                            <input type="color" 
-                                   id="WHATSAPP_WIDGET_COLOR" 
-                                   name="WHATSAPP_WIDGET_COLOR" 
-                                   value="{$WHATSAPP_WIDGET_COLOR}" 
-                                   class="form-control">
-                            <small class="text-muted">{l s='Choose the widget background color' mod='whatsappwidget'}</small>
+                
+                <div class="form-group">
+                    <label class="control-label col-lg-3">
+                        {l s='Show on Devices' mod='whatsappwidget'}
+                    </label>
+                    <div class="col-lg-9">
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="WHATSAPP_WIDGET_VISIBILITY_DEVICES[]" value="desktop" {if 'desktop'|in_array:$config_values.WHATSAPP_WIDGET_VISIBILITY_DEVICES}checked{/if}> {l s='Desktop' mod='whatsappwidget'}</label>
                         </div>
-                    </div>
-
-                    <!-- Widget Size -->
-                    <div class="whatsapp-form-group">
-                        <label for="WHATSAPP_WIDGET_SIZE">
-                            <i class="fas fa-expand-arrows-alt"></i>
-                            {l s='Widget Size' mod='whatsappwidget'}
-                        </label>
-                        <div class="whatsapp-select">
-                            <select id="WHATSAPP_WIDGET_SIZE" name="WHATSAPP_WIDGET_SIZE" class="form-control">
-                                <option value="small" {if $WHATSAPP_WIDGET_SIZE == 'small'}selected{/if}>
-                                    {l s='Small (50px)' mod='whatsappwidget'}
-                                </option>
-                                <option value="medium" {if $WHATSAPP_WIDGET_SIZE == 'medium'}selected{/if}>
-                                    {l s='Medium (60px)' mod='whatsappwidget'}
-                                </option>
-                                <option value="large" {if $WHATSAPP_WIDGET_SIZE == 'large'}selected{/if}>
-                                    {l s='Large (70px)' mod='whatsappwidget'}
-                                </option>
-                            </select>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="WHATSAPP_WIDGET_VISIBILITY_DEVICES[]" value="mobile" {if 'mobile'|in_array:$config_values.WHATSAPP_WIDGET_VISIBILITY_DEVICES}checked{/if}> {l s='Mobile & Tablet' mod='whatsappwidget'}</label>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Page Visibility Settings -->
-        <div class="whatsapp-card whatsapp-fade-in">
-            <div class="whatsapp-card-header">
-                <h3>
-                    <i class="fas fa-toggle-on icon"></i>
-                    {l s='Page Visibility Settings' mod='whatsappwidget'}
-                </h3>
-            </div>
-            <div class="whatsapp-card-body">
-                <div class="whatsapp-grid">
-                    <!-- Show on Product Pages -->
-                    <div class="whatsapp-form-group">
-                        <label for="WHATSAPP_WIDGET_SHOW_PRODUCT">
-                            {l s='Show on Product Pages' mod='whatsappwidget'}
-                        </label>
-                        <div class="whatsapp-switch">
-                            <input type="checkbox" id="WHATSAPP_WIDGET_SHOW_PRODUCT" name="WHATSAPP_WIDGET_SHOW_PRODUCT" value="1" {if $WHATSAPP_WIDGET_SHOW_PRODUCT}checked{/if}>
-                            <span class="slider"></span>
-                        </div>
-                    </div>
-
-                    <!-- Show on Category Pages -->
-                    <div class="whatsapp-form-group">
-                        <label for="WHATSAPP_WIDGET_SHOW_CATEGORY">
-                            {l s='Show on Category Pages' mod='whatsappwidget'}
-                        </label>
-                        <div class="whatsapp-switch">
-                            <input type="checkbox" id="WHATSAPP_WIDGET_SHOW_CATEGORY" name="WHATSAPP_WIDGET_SHOW_CATEGORY" value="1" {if $WHATSAPP_WIDGET_SHOW_CATEGORY}checked{/if}>
-                            <span class="slider"></span>
-                        </div>
-                    </div>
-
-                    <!-- Show on Home Page -->
-                    <div class="whatsapp-form-group">
-                        <label for="WHATSAPP_WIDGET_SHOW_HOME">
-                            {l s='Show on Home Page' mod='whatsappwidget'}
-                        </label>
-                        <div class="whatsapp-switch">
-                            <input type="checkbox" id="WHATSAPP_WIDGET_SHOW_HOME" name="WHATSAPP_WIDGET_SHOW_HOME" value="1" {if $WHATSAPP_WIDGET_SHOW_HOME}checked{/if}>
-                            <span class="slider"></span>
-                        </div>
-                    </div>
-
-                    <!-- Show on All Pages -->
-                    <div class="whatsapp-form-group">
-                        <label for="WHATSAPP_WIDGET_SHOW_ALL">
-                            {l s='Show on All Pages' mod='whatsappwidget'}
-                        </label>
-                        <div class="whatsapp-switch">
-                            <input type="checkbox" id="WHATSAPP_WIDGET_SHOW_ALL" name="WHATSAPP_WIDGET_SHOW_ALL" value="1" {if $WHATSAPP_WIDGET_SHOW_ALL}checked{/if}>
-                            <span class="slider"></span>
-                        </div>
-                        <small class="text-muted">{l s='Override page-specific settings and show on all pages' mod='whatsappwidget'}</small>
+            </fieldset>
+            
+            <!-- Appearance Settings -->
+            <fieldset>
+                <legend><i class="icon-paint-brush"></i> {l s='Appearance' mod='whatsappwidget'}</legend>
+                
+                <div class="form-group">
+                    <label class="control-label col-lg-3">
+                        {l s='Position' mod='whatsappwidget'}
+                    </label>
+                    <div class="col-lg-9">
+                        <select name="WHATSAPP_WIDGET_POSITION" class="form-control">
+                            <option value="bottom-right" {if $config_values.WHATSAPP_WIDGET_POSITION == 'bottom-right'}selected{/if}>{l s='Bottom Right' mod='whatsappwidget'}</option>
+                            <option value="bottom-left" {if $config_values.WHATSAPP_WIDGET_POSITION == 'bottom-left'}selected{/if}>{l s='Bottom Left' mod='whatsappwidget'}</option>
+                        </select>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Preview Section -->
-        <div class="whatsapp-card whatsapp-fade-in">
-            <div class="whatsapp-card-header">
-                <h3>
-                    <i class="fas fa-eye icon"></i>
-                    {l s='Live Preview' mod='whatsappwidget'}
-                </h3>
-            </div>
-            <div class="whatsapp-card-body">
-                <div class="whatsapp-preview">
-                    <div class="whatsapp-preview-title">
-                        {l s='Widget Preview' mod='whatsappwidget'}
-                    </div>
-                    <div class="whatsapp-widget-preview" 
-                         style="background-color: {$WHATSAPP_WIDGET_COLOR};"
-                         data-tooltip="{l s='Click to test WhatsApp link' mod='whatsappwidget'}">
-                        <i class="fab fa-whatsapp"></i>
+                
+                <div class="form-group">
+                    <label class="control-label col-lg-3">
+                        {l s='Theme Color' mod='whatsappwidget'}
+                    </label>
+                    <div class="col-lg-9">
+                        <input type="color" name="WHATSAPP_WIDGET_THEME_COLOR" value="{$config_values.WHATSAPP_WIDGET_THEME_COLOR|escape:'html':'UTF-8'}" class="form-control">
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Custom Hook Instructions -->
-        {if $WHATSAPP_WIDGET_HOOK == 'displayCustomWhatsAppWidget'}
-        <div class="whatsapp-card whatsapp-fade-in">
-            <div class="whatsapp-card-header">
-                <h3>
-                    <i class="fas fa-code icon"></i>
-                    {l s='Custom Hook Usage' mod='whatsappwidget'}
-                </h3>
-            </div>
-            <div class="whatsapp-card-body">
-                <p>{l s='To use the custom position, add the following code to your theme template files:' mod='whatsappwidget'}</p>
-                <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; font-family: monospace; margin: 15px 0;">
-                    {literal}{hook h='displayCustomWhatsAppWidget'}{/literal}
+                
+                <div class="form-group">
+                    <label class="control-label col-lg-3">
+                        {l s='Button Size' mod='whatsappwidget'}
+                    </label>
+                    <div class="col-lg-9">
+                        <select name="WHATSAPP_WIDGET_BUTTON_SIZE" class="form-control">
+                            <option value="sm" {if $config_values.WHATSAPP_WIDGET_BUTTON_SIZE == 'sm'}selected{/if}>{l s='Small' mod='whatsappwidget'}</option>
+                            <option value="md" {if $config_values.WHATSAPP_WIDGET_BUTTON_SIZE == 'md'}selected{/if}>{l s='Medium' mod='whatsappwidget'}</option>
+                            <option value="lg" {if $config_values.WHATSAPP_WIDGET_BUTTON_SIZE == 'lg'}selected{/if}>{l s='Large' mod='whatsappwidget'}</option>
+                        </select>
+                    </div>
                 </div>
-                <p><strong>{l s='Example locations:' mod='whatsappwidget'}</strong></p>
-                <ul>
-                    <li>{l s='themes/your-theme/templates/_partials/header.tpl' mod='whatsappwidget'}</li>
-                    <li>{l s='themes/your-theme/templates/_partials/footer.tpl' mod='whatsappwidget'}</li>
-                    <li>{l s='themes/your-theme/templates/catalog/product.tpl' mod='whatsappwidget'}</li>
-                    <li>{l s='themes/your-theme/templates/index.tpl' mod='whatsappwidget'}</li>
-                </ul>
-            </div>
-        </div>
-        {/if}
-
-        <!-- Action Buttons -->
-        <div class="whatsapp-card whatsapp-fade-in">
-            <div class="whatsapp-card-body whatsapp-text-center">
-                <button type="submit" name="submitWhatsAppWidget" class="whatsapp-btn whatsapp-btn-primary">
-                    <i class="fas fa-save"></i>
-                    {l s='Save Configuration' mod='whatsappwidget'}
+                
+                <div class="form-group">
+                    <label class="control-label col-lg-3">
+                        {l s='Border Radius' mod='whatsappwidget'}
+                    </label>
+                    <div class="col-lg-9">
+                        <select name="WHATSAPP_WIDGET_BORDER_RADIUS" class="form-control">
+                            <option value="md" {if $config_values.WHATSAPP_WIDGET_BORDER_RADIUS == 'md'}selected{/if}>{l s='Medium' mod='whatsappwidget'}</option>
+                            <option value="lg" {if $config_values.WHATSAPP_WIDGET_BORDER_RADIUS == 'lg'}selected{/if}>{l s='Large (Rounded)' mod='whatsappwidget'}</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="control-label col-lg-3">
+                        {l s='Dark Mode' mod='whatsappwidget'}
+                    </label>
+                    <div class="col-lg-9">
+                        <span class="switch prestashop-switch fixed-width-lg">
+                            <input type="radio" name="WHATSAPP_WIDGET_DARK_MODE" id="WHATSAPP_WIDGET_DARK_MODE_on" value="1" {if $config_values.WHATSAPP_WIDGET_DARK_MODE}checked="checked"{/if}>
+                            <label for="WHATSAPP_WIDGET_DARK_MODE_on">{l s='Yes' mod='whatsappwidget'}</label>
+                            <input type="radio" name="WHATSAPP_WIDGET_DARK_MODE" id="WHATSAPP_WIDGET_DARK_MODE_off" value="0" {if !$config_values.WHATSAPP_WIDGET_DARK_MODE}checked="checked"{/if}>
+                            <label for="WHATSAPP_WIDGET_DARK_MODE_off">{l s='No' mod='whatsappwidget'}</label>
+                            <a class="slide-button btn"></a>
+                        </span>
+                    </div>
+                </div>
+            </fieldset>
+            
+            <!-- Working Hours -->
+            <fieldset>
+                <legend><i class="icon-clock-o"></i> {l s='Working Hours' mod='whatsappwidget'}</legend>
+                
+                <div class="form-group">
+                    <label class="control-label col-lg-3">
+                        {l s='Enable Working Hours' mod='whatsappwidget'}
+                    </label>
+                    <div class="col-lg-9">
+                        <span class="switch prestashop-switch fixed-width-lg">
+                            <input type="radio" name="WHATSAPP_WIDGET_WORKING_HOURS_ENABLED" id="WHATSAPP_WIDGET_WORKING_HOURS_ENABLED_on" value="1" {if $config_values.WHATSAPP_WIDGET_WORKING_HOURS_ENABLED}checked="checked"{/if}>
+                            <label for="WHATSAPP_WIDGET_WORKING_HOURS_ENABLED_on">{l s='Yes' mod='whatsappwidget'}</label>
+                            <input type="radio" name="WHATSAPP_WIDGET_WORKING_HOURS_ENABLED" id="WHATSAPP_WIDGET_WORKING_HOURS_ENABLED_off" value="0" {if !$config_values.WHATSAPP_WIDGET_WORKING_HOURS_ENABLED}checked="checked"{/if}>
+                            <label for="WHATSAPP_WIDGET_WORKING_HOURS_ENABLED_off">{l s='No' mod='whatsappwidget'}</label>
+                            <a class="slide-button btn"></a>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="working-hours-settings" {if !$config_values.WHATSAPP_WIDGET_WORKING_HOURS_ENABLED}style="display:none;"{/if}>
+                    <div class="form-group">
+                        <label class="control-label col-lg-3">
+                            {l s='Working Days' mod='whatsappwidget'}
+                        </label>
+                        <div class="col-lg-9">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="WHATSAPP_WIDGET_WORKING_DAYS[]" value="monday" {if 'monday'|in_array:$config_values.WHATSAPP_WIDGET_WORKING_DAYS}checked{/if}> {l s='Monday' mod='whatsappwidget'}</label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="WHATSAPP_WIDGET_WORKING_DAYS[]" value="tuesday" {if 'tuesday'|in_array:$config_values.WHATSAPP_WIDGET_WORKING_DAYS}checked{/if}> {l s='Tuesday' mod='whatsappwidget'}</label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="WHATSAPP_WIDGET_WORKING_DAYS[]" value="wednesday" {if 'wednesday'|in_array:$config_values.WHATSAPP_WIDGET_WORKING_DAYS}checked{/if}> {l s='Wednesday' mod='whatsappwidget'}</label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="WHATSAPP_WIDGET_WORKING_DAYS[]" value="thursday" {if 'thursday'|in_array:$config_values.WHATSAPP_WIDGET_WORKING_DAYS}checked{/if}> {l s='Thursday' mod='whatsappwidget'}</label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="WHATSAPP_WIDGET_WORKING_DAYS[]" value="friday" {if 'friday'|in_array:$config_values.WHATSAPP_WIDGET_WORKING_DAYS}checked{/if}> {l s='Friday' mod='whatsappwidget'}</label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="WHATSAPP_WIDGET_WORKING_DAYS[]" value="saturday" {if 'saturday'|in_array:$config_values.WHATSAPP_WIDGET_WORKING_DAYS}checked{/if}> {l s='Saturday' mod='whatsappwidget'}</label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="WHATSAPP_WIDGET_WORKING_DAYS[]" value="sunday" {if 'sunday'|in_array:$config_values.WHATSAPP_WIDGET_WORKING_DAYS}checked{/if}> {l s='Sunday' mod='whatsappwidget'}</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-lg-3">
+                            {l s='Working Hours' mod='whatsappwidget'}
+                        </label>
+                        <div class="col-lg-9">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <input type="time" name="WHATSAPP_WIDGET_START_TIME" value="{$config_values.WHATSAPP_WIDGET_START_TIME|escape:'html':'UTF-8'}" class="form-control">
+                                    <p class="help-block">{l s='Start Time' mod='whatsappwidget'}</p>
+                                </div>
+                                <div class="col-lg-6">
+                                    <input type="time" name="WHATSAPP_WIDGET_END_TIME" value="{$config_values.WHATSAPP_WIDGET_END_TIME|escape:'html':'UTF-8'}" class="form-control">
+                                    <p class="help-block">{l s='End Time' mod='whatsappwidget'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-lg-3">
+                            {l s='Offline Message' mod='whatsappwidget'}
+                        </label>
+                        <div class="col-lg-9">
+                            <textarea name="WHATSAPP_WIDGET_OFFLINE_MESSAGE" class="form-control" rows="2">{$config_values.WHATSAPP_WIDGET_OFFLINE_MESSAGE|escape:'html':'UTF-8'}</textarea>
+                            <p class="help-block">{l s='Message to show when outside working hours' mod='whatsappwidget'}</p>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            
+            <!-- Advanced Settings -->
+            <fieldset>
+                <legend><i class="icon-cogs"></i> {l s='Advanced Settings' mod='whatsappwidget'}</legend>
+                
+                <div class="form-group">
+                    <label class="control-label col-lg-3">
+                        {l s='Consent Required' mod='whatsappwidget'}
+                    </label>
+                    <div class="col-lg-9">
+                        <span class="switch prestashop-switch fixed-width-lg">
+                            <input type="radio" name="WHATSAPP_WIDGET_CONSENT_REQUIRED" id="WHATSAPP_WIDGET_CONSENT_REQUIRED_on" value="1" {if $config_values.WHATSAPP_WIDGET_CONSENT_REQUIRED}checked="checked"{/if}>
+                            <label for="WHATSAPP_WIDGET_CONSENT_REQUIRED_on">{l s='Yes' mod='whatsappwidget'}</label>
+                            <input type="radio" name="WHATSAPP_WIDGET_CONSENT_REQUIRED" id="WHATSAPP_WIDGET_CONSENT_REQUIRED_off" value="0" {if !$config_values.WHATSAPP_WIDGET_CONSENT_REQUIRED}checked="checked"{/if}>
+                            <label for="WHATSAPP_WIDGET_CONSENT_REQUIRED_off">{l s='No' mod='whatsappwidget'}</label>
+                            <a class="slide-button btn"></a>
+                        </span>
+                        <p class="help-block">{l s='Require user consent before loading widget' mod='whatsappwidget'}</p>
+                    </div>
+                </div>
+                
+                <div class="consent-settings" {if !$config_values.WHATSAPP_WIDGET_CONSENT_REQUIRED}style="display:none;"{/if}>
+                    <div class="form-group">
+                        <label class="control-label col-lg-3">
+                            {l s='Consent Cookies' mod='whatsappwidget'}
+                        </label>
+                        <div class="col-lg-9">
+                            <input type="text" name="WHATSAPP_WIDGET_CONSENT_COOKIES" value="{$config_values.WHATSAPP_WIDGET_CONSENT_COOKIES|escape:'html':'UTF-8'}" class="form-control" placeholder="marketing_consent,analytics_consent">
+                            <p class="help-block">{l s='Comma-separated list of cookie names to check for consent' mod='whatsappwidget'}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="control-label col-lg-3">
+                        {l s='Force wa.me' mod='whatsappwidget'}
+                    </label>
+                    <div class="col-lg-9">
+                        <span class="switch prestashop-switch fixed-width-lg">
+                            <input type="radio" name="WHATSAPP_WIDGET_FORCE_WA_ME" id="WHATSAPP_WIDGET_FORCE_WA_ME_on" value="1" {if $config_values.WHATSAPP_WIDGET_FORCE_WA_ME}checked="checked"{/if}>
+                            <label for="WHATSAPP_WIDGET_FORCE_WA_ME_on">{l s='Yes' mod='whatsappwidget'}</label>
+                            <input type="radio" name="WHATSAPP_WIDGET_FORCE_WA_ME" id="WHATSAPP_WIDGET_FORCE_WA_ME_off" value="0" {if !$config_values.WHATSAPP_WIDGET_FORCE_WA_ME}checked="checked"{/if}>
+                            <label for="WHATSAPP_WIDGET_FORCE_WA_ME_off">{l s='No' mod='whatsappwidget'}</label>
+                            <a class="slide-button btn"></a>
+                        </span>
+                        <p class="help-block">{l s='Always use wa.me instead of web.whatsapp.com' mod='whatsappwidget'}</p>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="control-label col-lg-3">
+                        {l s='DataLayer Tracking' mod='whatsappwidget'}
+                    </label>
+                    <div class="col-lg-9">
+                        <span class="switch prestashop-switch fixed-width-lg">
+                            <input type="radio" name="WHATSAPP_WIDGET_DATALAYER_ENABLED" id="WHATSAPP_WIDGET_DATALAYER_ENABLED_on" value="1" {if $config_values.WHATSAPP_WIDGET_DATALAYER_ENABLED}checked="checked"{/if}>
+                            <label for="WHATSAPP_WIDGET_DATALAYER_ENABLED_on">{l s='Yes' mod='whatsappwidget'}</label>
+                            <input type="radio" name="WHATSAPP_WIDGET_DATALAYER_ENABLED" id="WHATSAPP_WIDGET_DATALAYER_ENABLED_off" value="0" {if !$config_values.WHATSAPP_WIDGET_DATALAYER_ENABLED}checked="checked"{/if}>
+                            <label for="WHATSAPP_WIDGET_DATALAYER_ENABLED_off">{l s='No' mod='whatsappwidget'}</label>
+                            <a class="slide-button btn"></a>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="datalayer-settings" {if !$config_values.WHATSAPP_WIDGET_DATALAYER_ENABLED}style="display:none;"{/if}>
+                    <div class="form-group">
+                        <label class="control-label col-lg-3">
+                            {l s='DataLayer Event Name' mod='whatsappwidget'}
+                        </label>
+                        <div class="col-lg-9">
+                            <input type="text" name="WHATSAPP_WIDGET_DATALAYER_EVENT" value="{$config_values.WHATSAPP_WIDGET_DATALAYER_EVENT|escape:'html':'UTF-8'}" class="form-control" placeholder="whatsapp_click">
+                            <p class="help-block">{l s='Event name to push to dataLayer on widget click' mod='whatsappwidget'}</p>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            
+            <div class="panel-footer">
+                <button type="button" id="preview_whatsapp_url" class="btn btn-info pull-left">
+                    <i class="icon-eye"></i> {l s='Preview WhatsApp URL' mod='whatsappwidget'}
                 </button>
-                <a href="{$link->getAdminLink('AdminModules')}&configure=whatsappwidget" class="whatsapp-btn whatsapp-btn-secondary">
-                    <i class="fas fa-undo"></i>
-                    {l s='Reset to Defaults' mod='whatsappwidget'}
-                </a>
+                <button type="submit" value="1" id="configuration_form_submit_btn" name="submitWhatsAppWidget" class="btn btn-default pull-right">
+                    <i class="process-icon-save"></i> {l s='Save' mod='whatsappwidget'}
+                </button>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 
-<script src="{$module_dir}views/js/admin.js"></script>
 <script>
-// Initialize phone formatting
-document.getElementById('WHATSAPP_WIDGET_PHONE').addEventListener('input', function() {
-    WhatsAppAdmin.formatPhone(this);
+$(document).ready(function() {
+    // CSRF token validation
+    $('#configuration_form').on('submit', function(e) {
+        var csrfToken = $('input[name="csrf_token"]').val();
+        if (!csrfToken) {
+            e.preventDefault();
+            alert('Security token is missing. Please refresh the page and try again.');
+            return false;
+        }
+    });
+    
+    // Toggle working hours settings
+    $('input[name="WHATSAPP_WIDGET_WORKING_HOURS_ENABLED"]').change(function() {
+        if ($(this).val() == '1' && $(this).is(':checked')) {
+            $('.working-hours-settings').show();
+        } else if ($(this).val() == '0' && $(this).is(':checked')) {
+            $('.working-hours-settings').hide();
+        }
+    });
+    
+    // Toggle consent settings
+    $('input[name="WHATSAPP_WIDGET_CONSENT_REQUIRED"]').change(function() {
+        if ($(this).val() == '1' && $(this).is(':checked')) {
+            $('.consent-settings').show();
+        } else if ($(this).val() == '0' && $(this).is(':checked')) {
+            $('.consent-settings').hide();
+        }
+    });
+    
+    // Toggle datalayer settings
+    $('input[name="WHATSAPP_WIDGET_DATALAYER_ENABLED"]').change(function() {
+        if ($(this).val() == '1' && $(this).is(':checked')) {
+            $('.datalayer-settings').show();
+        } else if ($(this).val() == '0' && $(this).is(':checked')) {
+            $('.datalayer-settings').hide();
+        }
+    });
+    
+    // Preview WhatsApp URL functionality
+    $('#preview_whatsapp_url').click(function() {
+        var phone = $('input[name="WHATSAPP_WIDGET_PHONE"]').val();
+        var defaultMessage = $('textarea[name="WHATSAPP_WIDGET_DEFAULT_MESSAGE"]').val();
+        var forceWaMe = $('input[name="WHATSAPP_WIDGET_FORCE_WA_ME"]:checked').val();
+        
+        if (!phone) {
+            alert('{l s="Please enter a phone number first" mod="whatsappwidget"}');
+            return;
+        }
+        
+        // Clean phone number
+        var cleanPhone = phone.replace(/[^+\d]/g, '');
+        if (!cleanPhone.startsWith('+')) {
+            cleanPhone = '+' + cleanPhone;
+        }
+        
+        // Generate preview URL
+        var baseUrl = (forceWaMe === '1') ? 'https://wa.me/' : 'https://web.whatsapp.com/send?phone=';
+        var message = defaultMessage || 'Hello! I\'m interested in your products.';
+        var encodedMessage = encodeURIComponent(message.replace(/\{[^}]+\}/g, '[TOKEN]'));
+        
+        var previewUrl;
+        if (forceWaMe === '1') {
+            previewUrl = baseUrl + cleanPhone.substring(1) + '?text=' + encodedMessage;
+        } else {
+            previewUrl = baseUrl + cleanPhone + '&text=' + encodedMessage;
+        }
+        
+        // Show preview in modal or new window
+        var previewWindow = window.open(previewUrl, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+        if (!previewWindow) {
+            // Fallback if popup blocked
+            var previewHtml = '<div class="alert alert-info">' +
+                '<h4><i class="icon-info"></i> {l s="WhatsApp URL Preview" mod="whatsappwidget"}</h4>' +
+                '<p><strong>{l s="Generated URL:" mod="whatsappwidget"}</strong></p>' +
+                '<p><a href="' + previewUrl + '" target="_blank">' + previewUrl + '</a></p>' +
+                '<p><small>{l s="Note: Tokens like {page_url}, {product_name} will be replaced with actual values on the frontend." mod="whatsappwidget"}</small></p>' +
+                '</div>';
+            
+            // Remove existing preview
+            $('.whatsapp-preview').remove();
+            
+            // Add preview after the button
+            $(this).closest('.panel-footer').after(previewHtml);
+            $(this).closest('.panel-footer').next().addClass('whatsapp-preview');
+        }
+    });
+    
+    // Enhanced phone number validation
+    $('input[name="WHATSAPP_WIDGET_PHONE"]').on('input', function() {
+        // Remove any non-digit characters except +
+        var value = $(this).val().replace(/[^+\d]/g, '');
+        
+        // Ensure it starts with +
+        if (value && !value.startsWith('+')) {
+            value = '+' + value;
+        }
+        
+        $(this).val(value);
+    });
+    
+    $('input[name="WHATSAPP_WIDGET_PHONE"]').on('blur', function() {
+        var phone = $(this).val();
+        var e164Regex = /^\+[1-9]\d{1,14}$/;
+        
+        if (phone && !e164Regex.test(phone)) {
+            $(this).addClass('error').css({
+                'border-color': '#dc3545',
+                'background-color': '#fff5f5'
+            });
+            if (!$(this).next('.error-message').length) {
+                $(this).after('<p class="error-message text-danger">{l s="Phone number must be in E.164 format (e.g., +905551112233)" mod="whatsappwidget"}</p>');
+            }
+        } else {
+            $(this).removeClass('error').css({
+                'border-color': '',
+                'background-color': ''
+            });
+            $(this).next('.error-message').remove();
+        }
+    });
+    
+    // Message template validation
+    $('textarea[name*="MESSAGE"]').on('input', function() {
+        var maxLength = 1000;
+        var currentLength = $(this).val().length;
+        
+        if (currentLength > maxLength) {
+            $(this).css({
+                'border-color': '#dc3545',
+                'background-color': '#fff5f5'
+            });
+        } else {
+            $(this).css({
+                'border-color': '',
+                'background-color': ''
+            });
+        }
+    });
 });
-
-// Show/hide position settings based on style
-document.getElementById('WHATSAPP_WIDGET_STYLE').addEventListener('change', function() {
-    const positionGroup = document.getElementById('position-group');
-    if (this.value === 'floating') {
-        positionGroup.style.display = 'block';
-    } else {
-        positionGroup.style.display = 'none';
-    }
-});
-
-// Initial state
-if (document.getElementById('WHATSAPP_WIDGET_STYLE').value !== 'floating') {
-    document.getElementById('position-group').style.display = 'none';
-}
 </script>
