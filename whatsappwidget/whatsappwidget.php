@@ -9,13 +9,30 @@ if (!defined('_PS_VERSION_')) {
 // Autoload composer dependencies
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     require_once __DIR__ . '/vendor/autoload.php';
+} else {
+    // PSR-4 fallback autoloader for shared hosting without composer
+    spl_autoload_register(function ($class) {
+        $prefix = 'WhatsAppWidget\\';
+        $baseDir = __DIR__ . '/src/';
+        
+        $len = strlen($prefix);
+        if (strncmp($prefix, $class, $len) !== 0) {
+            return;
+        }
+        
+        $relative = substr($class, $len);
+        $file = $baseDir . str_replace('\\', '/', $relative) . '.php';
+        if (is_file($file)) {
+            require $file;
+        }
+    });
 }
 
 use WhatsAppWidget\Util\Phone;
 use WhatsAppWidget\Util\Template;
 use WhatsAppWidget\Util\WorkingHours;
 use WhatsAppWidget\Security\Validator;
-use WhatsAppWidget\Security\Security;
+use WhatsAppWidget\Security\Security as WwSecurity;
 
 class WhatsAppWidget extends Module
 {
@@ -171,8 +188,8 @@ class WhatsAppWidget extends Module
     {
         // CSRF Protection
         $csrfToken = Tools::getValue('csrf_token');
-        if (!Security::validateCSRFToken($csrfToken)) {
-            Security::logSecurityEvent('CSRF token validation failed', [
+        if (!WwSecurity::validateCSRFToken($csrfToken)) {
+            WwSecurity::logSecurityEvent('CSRF token validation failed', [
                 'module' => $this->name,
                 'action' => 'configuration_update'
             ]);
@@ -181,8 +198,8 @@ class WhatsAppWidget extends Module
 
         // Rate limiting
         $clientIp = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-        if (!Security::checkRateLimit($clientIp, 10, 300)) {
-            Security::logSecurityEvent('Rate limit exceeded', [
+        if (!WwSecurity::checkRateLimit($clientIp, 10, 300)) {
+            WwSecurity::logSecurityEvent('Rate limit exceeded', [
                 'module' => $this->name,
                 'ip' => $clientIp
             ]);
@@ -255,7 +272,7 @@ class WhatsAppWidget extends Module
         
         // Sanitize and save configuration
         $configUpdates = [
-            'ENABLED' => Security::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_ENABLED'), 'bool'),
+            'ENABLED' => WwSecurity::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_ENABLED'), 'bool'),
             'PHONE' => $phone,
             'DEFAULT_MESSAGE' => $defaultMessage,
             'PRODUCT_MESSAGE' => $productMessage,
@@ -265,16 +282,16 @@ class WhatsAppWidget extends Module
             'THEME_COLOR' => $color,
             'BUTTON_SIZE' => Validator::validateAllowedValues([Tools::getValue('WHATSAPP_WIDGET_BUTTON_SIZE')], ['sm', 'md', 'lg'])[0] ?? 'md',
             'BORDER_RADIUS' => Validator::validateAllowedValues([Tools::getValue('WHATSAPP_WIDGET_BORDER_RADIUS')], ['md', 'lg'])[0] ?? 'md',
-            'DARK_MODE' => Security::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_DARK_MODE'), 'bool'),
-            'WORKING_HOURS_ENABLED' => Security::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_WORKING_HOURS_ENABLED'), 'bool'),
+            'DARK_MODE' => WwSecurity::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_DARK_MODE'), 'bool'),
+            'WORKING_HOURS_ENABLED' => WwSecurity::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_WORKING_HOURS_ENABLED'), 'bool'),
             'WORKING_DAYS' => json_encode(Validator::validateAllowedValues(Tools::getValue('WHATSAPP_WIDGET_WORKING_DAYS', []), ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])),
             'START_TIME' => Tools::getValue('WHATSAPP_WIDGET_START_TIME'),
             'END_TIME' => Tools::getValue('WHATSAPP_WIDGET_END_TIME'),
             'OFFLINE_MESSAGE' => Validator::sanitizeMessageTemplate(Tools::getValue('WHATSAPP_WIDGET_OFFLINE_MESSAGE')),
-            'CONSENT_REQUIRED' => Security::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_CONSENT_REQUIRED'), 'bool'),
+            'CONSENT_REQUIRED' => WwSecurity::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_CONSENT_REQUIRED'), 'bool'),
             'CONSENT_COOKIES' => Validator::sanitizeOutput(Tools::getValue('WHATSAPP_WIDGET_CONSENT_COOKIES')),
-            'FORCE_WA_ME' => Security::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_FORCE_WA_ME'), 'bool'),
-            'DATALAYER_ENABLED' => Security::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_DATALAYER_ENABLED'), 'bool'),
+            'FORCE_WA_ME' => WwSecurity::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_FORCE_WA_ME'), 'bool'),
+            'DATALAYER_ENABLED' => WwSecurity::sanitizeConfigValue(Tools::getValue('WHATSAPP_WIDGET_DATALAYER_ENABLED'), 'bool'),
             'DATALAYER_EVENT' => Validator::sanitizeOutput($dataLayerEvent)
         ];
         
@@ -791,7 +808,7 @@ class WhatsAppWidget extends Module
         $this->context->controller->addJS($this->_path.'views/js/admin.js');
         
         // Generate CSRF token
-        $csrfToken = Security::generateCSRFToken();
+        $csrfToken = WwSecurity::generateCSRFToken();
         
         $this->context->smarty->assign([
             'module_dir' => $this->_path,
